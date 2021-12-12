@@ -174,5 +174,6 @@ const animals = [
 ]
 module.exports = {
     mainCards,
-    animals
+    animals,
+    categories
 }

@@ -1,5 +1,5 @@
 const {ApolloServer, gql } = require('apollo-server');
-const {mainCards, animals} = require('./db')
+const {mainCards, animals, categories} = require('./db')
 
 const typeDefs = gql `
 type Book{
@@ -20,6 +20,7 @@ type Animals{
     description: [String]
     stock: Int
     onSale: Boolean
+    category: Category
 }
 
 type Animal{
@@ -32,6 +33,15 @@ type Animal{
     description: [String]
     stock: Int
     onSale: Boolean
+    category: Category
+}
+type Category{
+    id: ID!
+    title:String
+    image:String
+    category: String
+    slug: String
+    animals: [Animal]
 }
 
 type Query{
@@ -39,6 +49,8 @@ type Query{
     mainCards:[MainCard]
     animals:[Animals]
     animal(image:String): Animal
+    categories: [Category]
+    category(slug:String!): Category
    
 }
 `;
@@ -59,13 +71,26 @@ const resolvers = {
         books: ()=>books,
         mainCards: ()=>mainCards,
         animals: ()=>animals,
+        category: ()=>category,
         animal: (parent, args, ctx)=>{
             let animal = animals.find((animal)=>{
                 return animal.image===args.image
             })
         return animal
-    }
+        },
+        categories: ()=> categories,
+        category: (parent, args, ctx)=>{
+            let category = categories.find((category)=>{
+                return category.slug===args.slug
+            });
+            return category
+        }
     },
+    Category:{
+        animals:(parent,args,ctx)=>{
+            console.log(parent)
+        }
+    }
 };
 const server = new ApolloServer({typeDefs, resolvers});
 
