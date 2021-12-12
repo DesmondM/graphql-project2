@@ -11,13 +11,35 @@ type MainCard{
     image:String
 }
 type Animals{
+    id: ID!
     title:String
     image:String
+    slug: String
+    rating: Float
+    price: String
+    description: [String]
+    stock: Int
+    onSale: Boolean
 }
+
+type Animal{
+    id: ID!
+    title:String
+    image:String
+    slug: String
+    rating: Float
+    price: String
+    description: [String]
+    stock: Int
+    onSale: Boolean
+}
+
 type Query{
     books: [Book]
     mainCards:[MainCard]
     animals:[Animals]
+    animal(image:String): Animal
+   
 }
 `;
 
@@ -36,7 +58,13 @@ const resolvers = {
     Query: {
         books: ()=>books,
         mainCards: ()=>mainCards,
-        animals: ()=>animals
+        animals: ()=>animals,
+        animal: (parent, args, ctx)=>{
+            let animal = animals.find((animal)=>{
+                return animal.image===args.image
+            })
+        return animal
+    }
     },
 };
 const server = new ApolloServer({typeDefs, resolvers});
